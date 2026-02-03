@@ -78,7 +78,7 @@ model Attendance {
   @@map("attendance")
 }
 
-model Class{
+model Class {
   id         Int      @id @default(autoincrement())
   title      String
   description String?

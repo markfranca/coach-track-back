@@ -1,6 +1,5 @@
 import express from "express";
 import cors from 'cors';
-import prisma from "./lib/prisma";
 import router from "./routes";
 
 
