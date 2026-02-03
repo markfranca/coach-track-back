@@ -1,4 +1,3 @@
-import { PrismaClient } from "../generated/prisma/client";
 import prisma from "../lib/prisma";
 import { CreateUserData, UpdateUserData, UserResponse } from "../interfaces/userInterfaces";
 
