@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import { getAllUsersModel, getUserByIdModel, createUserModel, updateUserModel, deleteUserModel } from "../models/userModels";
+import { getAllUsersModel, getUserByIdModel, createUserModel, updateUserModel, deleteUserModel, getUserByEmailModel } from "../models/userModels";
 
 
 export async function getUsers(req: Request, res: Response) {
@@ -43,6 +43,10 @@ export async function createUser(req: Request, res: Response) {
 
         if(!userData || Object.keys(userData).length === 0) {
             return res.status(400).json({ error: "Invalid user data" });
+        }
+        
+        if (await getUserByEmailModel(userData.email)) {
+            return res.status(409).json({ error: "Email already in use" });
         }
         
         const newUser = await createUserModel(userData);
