@@ -7,3 +7,90 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Role {
+  Teacher
+  Student
+  ADMIN
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  JUSTIFIED
+  LATE
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  role      Role     @default(Student)
+
+  studenteProfiles StudentProfile?
+  teacherProfiles TeacherProfile?
+
+  @@map("user")
+}
+
+
+model StudentProfile {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  bio       String?
+  createdAt DateTime @default(now())
+
+  responsibleName String
+  responsibleContact String
+  enrollmentDate     DateTime @default(now())
+  attendances      Attendance[]
+  classes         Class[]
+
+  user      User     @relation(fields: [userId], references: [id])
+  @@map("student_profile")
+}
+
+model TeacherProfile {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  classes    Class[]
+
+  user      User     @relation(fields: [userId], references: [id])
+  @@map("teacher_profile")
+}
+
+
+model Attendance {
+  id         Int      @id @default(autoincrement())
+  
+  studentId  Int
+  date       DateTime
+  status     AttendanceStatus
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  student    StudentProfile @relation(fields: [studentId], references: [id])
+  @@map("attendance")
+}
+
+model Class{
+  id         Int      @id @default(autoincrement())
+  title      String
+  description String?
+  date       DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  studentId Int
+  teacherId  Int
+
+  teacher    TeacherProfile @relation(fields: [teacherId], references: [id])
+  students   StudentProfile @relation(fields: [studentId], references: [id])
+  @@map("class")
+  
+}
