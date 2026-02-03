@@ -8,8 +8,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
-
 enum Role {
   Teacher
   Student
@@ -48,6 +46,7 @@ model StudentProfile {
   responsibleContact String
   enrollmentDate     DateTime @default(now())
   attendances      Attendance[]
+  classes         Class[]
 
   user      User     @relation(fields: [userId], references: [id])
   @@map("student_profile")
@@ -59,6 +58,7 @@ model TeacherProfile {
   bio       String?
   createdAt DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  classes    Class[]
 
   user      User     @relation(fields: [userId], references: [id])
   @@map("teacher_profile")
@@ -86,6 +86,11 @@ model Class{
   date       DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  studentId Int
+  teacherId  Int
 
+  teacher    TeacherProfile @relation(fields: [teacherId], references: [id])
+  students   StudentProfile @relation(fields: [studentId], references: [id])
+  @@map("class")
   
 }
