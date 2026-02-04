@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction} from 'express';
 import { verifyAccessToken } from '../utils/token';
 
+
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
 
@@ -23,7 +24,10 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
             return res.status(401).json({ error: "Invalid token" });
         }
 
-        (req as any).user = decoded;
+            req.user = {
+      id: Number(decoded.sub),
+      role: decoded.role,
+    }
         next();
 
     }

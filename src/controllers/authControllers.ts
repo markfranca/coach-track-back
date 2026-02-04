@@ -63,8 +63,10 @@ export async function register (req: Request, res: Response) {
 
 export async function getMe(req: Request, res: Response) {
     try{
-        const userId = parseInt(req.params.id as string, 10);
+        
+        const userId = req.user.id
 
+        
         if(!userId || isNaN(userId)) {
             return res.status(400).json({ error: "Invalid user ID" });
         }
