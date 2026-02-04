@@ -32,6 +32,7 @@ export async function login(req: Request, res: Response) {
     }
     catch (error) {
         res.status(500).json({ error: "Failed to login" });
+        console.log(error)
     }
 }
 

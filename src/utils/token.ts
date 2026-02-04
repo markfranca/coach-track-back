@@ -1,6 +1,7 @@
+import 'dotenv/config'
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { StringValue } from 'ms'
-import 'dotenv/config'
+
 
 export const generateAccessToken = (user: {
   id: number
