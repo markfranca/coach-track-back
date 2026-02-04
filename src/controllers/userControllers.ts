@@ -1,7 +1,6 @@
 import {Request, Response} from "express";
 import { getAllUsersModel, getUserByIdModel, createUserModel, updateUserModel, deleteUserModel, getUserByEmailModel } from "../models/userModels";
 
-
 export async function getUsers(req: Request, res: Response) {
     try{
         const users =  await getAllUsersModel();
@@ -50,6 +49,7 @@ export async function createUser(req: Request, res: Response) {
         }
         
         const newUser = await createUserModel(userData);
+
         res.status(201).json({ message: "User created successfully", newUser });
     } catch (error) {
         res.status(500).json({ error: "Failed to create user" });
