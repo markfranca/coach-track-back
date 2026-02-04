@@ -85,11 +85,10 @@ model Class {
   date       DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  studentId Int
   teacherId  Int
 
   teacher    TeacherProfile @relation(fields: [teacherId], references: [id])
-  students   StudentProfile @relation(fields: [studentId], references: [id])
+  students   StudentProfile[] 
   @@map("class")
   
 }
