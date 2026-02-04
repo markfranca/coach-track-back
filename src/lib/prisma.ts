@@ -1,6 +1,17 @@
-import { PrismaClient } from "../generated/prisma/client";
+import "dotenv/config";
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
-// @ts-expect-error - Prisma 7 type issue with constructor
-const prisma = new PrismaClient();
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const adapter = new PrismaPg(pool);
+
+const prisma = new PrismaClient({
+  adapter,
+  log: ['error', 'warn'],
+});
 
 export default prisma;

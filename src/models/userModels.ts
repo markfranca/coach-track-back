@@ -1,5 +1,5 @@
-import { PrismaClient } from "../generated/prisma/client";
 import prisma from "../lib/prisma";
+import { CreateUserData, UpdateUserData, UserResponse } from "../interfaces/userInterfaces";
 
 
 export const getAllUsersModel = async () => {
@@ -14,14 +14,14 @@ export const getUserByIdModel = async (userId: number) => {
     return user;
 }
 
-export const createUserModel = async (userData: any) => {
+export const createUserModel = async (userData: CreateUserData): Promise<UserResponse> => {
     const newUser = await prisma.user.create({
         data: userData,
     });
     return newUser;
 }
 
-export const updateUserModel = async (userId: number, userData: any) => {
+export const updateUserModel = async (userId: number, userData: UpdateUserData): Promise<UserResponse> => {
   const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: userData,
@@ -35,3 +35,10 @@ export const deleteUserModel = async (userId: number) => {
     });
     return deletedUser;
 }  
+
+export const getUserByEmailModel = async (email: string) => {
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+    return user;
+}

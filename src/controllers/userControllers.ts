@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import { getAllUsersModel, getUserByIdModel, createUserModel, updateUserModel, deleteUserModel } from "../models/userModels";
+import { getAllUsersModel, getUserByIdModel, createUserModel, updateUserModel, deleteUserModel, getUserByEmailModel } from "../models/userModels";
 
 
 export async function getUsers(req: Request, res: Response) {
@@ -45,8 +45,12 @@ export async function createUser(req: Request, res: Response) {
             return res.status(400).json({ error: "Invalid user data" });
         }
         
+        if (await getUserByEmailModel(userData.email)) {
+            return res.status(409).json({ error: "Email already in use" });
+        }
+        
         const newUser = await createUserModel(userData);
-        res.status(201).json(newUser);
+        res.status(201).json({ message: "User created successfully", newUser });
     } catch (error) {
         res.status(500).json({ error: "Failed to create user" });
     }
@@ -66,7 +70,7 @@ export async function updateUser(req: Request, res: Response) {
         }
 
         const updatedUser = await updateUserModel(userId, userData);
-        res.status(200).json(updatedUser);
+        res.status(200).json({ message: "User updated successfully", updatedUser });
     } catch (error) {
         res.status(500).json({ error: "Failed to update user" });
     }
@@ -81,7 +85,7 @@ export async function deleteUser(req: Request, res: Response) {
         }
 
         const deletedUser = await deleteUserModel(userId);
-        res.status(200).json(deletedUser);
+        res.status(200).json({ message: "User deleted successfully", deletedUser });
     } catch (error) {
         res.status(500).json({ error: "Failed to delete user" });
     }
