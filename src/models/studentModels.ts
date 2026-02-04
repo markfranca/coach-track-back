@@ -2,21 +2,35 @@ import prisma from "../lib/prisma";
 
 
 export const getAllStudents = async () => {
-    // Implementation for fetching all students
+    const students = await prisma.studentProfile.findMany();
+    return students;
 }
 
 export const getStudentById = async (studentId: number) => {
-    // Implementation for fetching a student by ID
+    const student = await prisma.studentProfile.findUnique({
+        where: { id: studentId },
+    });
+    return student;
 }
 
 export const createStudent = async (studentData: any) => {
-    // Implementation for creating a new student
+    const newStudent = await prisma.studentProfile.create({
+        data: studentData,
+    });
+    return newStudent;
 }   
 
 export const updateStudent = async (studentId: number, studentData: any) => {
-    // Implementation for updating a student
+    const updatedStudent = await prisma.studentProfile.update({
+        where: { id: studentId },
+        data: studentData,
+    });
+    return updatedStudent;
 }
 
 export const deleteStudent = async (studentId: number) => {
-    // Implementation for deleting a student
+    const deletedStudent = await prisma.studentProfile.delete({
+        where: { id: studentId },
+    });
+    return deletedStudent;
 }
