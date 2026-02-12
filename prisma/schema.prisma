@@ -67,8 +67,8 @@ model StudentProfile {
   status             StudentStatus @default(ACTIVE)
   
 
-  responsibleName    String
-  responsiblePhone   String
+  responsibleName    String?
+  responsiblePhone   String?
   emergencyContact   String?
   
   enrollmentDate     DateTime      @default(now())
@@ -84,6 +84,9 @@ model StudentProfile {
   @@map("student_profiles")
 }
 
+// ========================================
+// TEACHER PROFILE
+// ========================================
 
 model TeacherProfile {
   id             Int      @id @default(autoincrement())

@@ -14,7 +14,7 @@ export async function getAllStudents(req: Request, res: Response) {
 // Buscar aluno por ID (para o próprio aluno ou admin/professor)
 export async function getStudentById(req: Request, res: Response) {
     try {
-        // Se vier do parâmetro da URL, usa ele; senão usa o studentId do token
+ 
         const paramId = typeof req.params.id === 'string' ? req.params.id : req.params.id?.[0];
         const studentId = paramId ? parseInt(paramId) : req.user?.studentId;
         

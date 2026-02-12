@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
-        const public_paths = ['/auth/login', '/auth/register'];
+        const public_paths = ['/auth/login', '/auth/register-teacher'];
         if (public_paths.includes(req.path)) {
             return next();
         }
@@ -24,7 +24,6 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
             return res.status(401).json({ error: "Invalid token" });
         }
 
-        // Buscar user com Person e Profiles
         const user = await prisma.user.findUnique({
             where: { id: Number(decoded.sub) },
             include: {
@@ -41,7 +40,6 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
             return res.status(401).json({ error: "User not found" });
         }
 
-        // Atribuir ao req.user
         req.user = {
             id: user.id,
             role: user.role,

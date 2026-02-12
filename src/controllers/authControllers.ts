@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { generateAccessToken } from "../utils/token";
 import { getUserByEmail, getUserById, updateLastLogin } from '../models/userModels';
-
+import { createTeacher } from '../models/teacherModels';
 // Login
 export async function login(req: Request, res: Response) {
     try {
@@ -43,15 +43,53 @@ export async function login(req: Request, res: Response) {
         });
     }
     catch (error) {
-        res.status(500).json({ error: "Failed to login" });
+        res.status(500).json({ error: `Failed to login: ${error.message}` });
         console.log(error);
     }
 }
 
-// N IREI IMPLEMENTAR POR ENQUANTO POIS TODOS OS PROFESSORES SERÃO CRIADOS A PARTIR DE UMA SEED E ALUNOS NÃO ACESSARAM O SSITEMA APENAS SÃO UMA ENTIDADE
-export async function register(req: Request, res: Response)  {
-    res.status(200).json({ message: "Registration endpoint - to be implemented" });
+export async function registerTeacher(req: Request, res: Response)  {
+    try {
+    
+        const { name, email, password, phone, specialization, cpf, birthDate } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ error: "Missing required fields: name, email, password" });
+        }
+
+        if (await getUserByEmail(email)) {
+            return res.status(409).json({ error: "Email already in use" });
+        }
+
+
+        const teacher = await createTeacher({
+            name,
+            email,
+            phone: phone || null,
+            password: password,
+            specialization: specialization || null,
+            cpf: cpf || null,
+            birthDate: birthDate || null,
+            photoUrl: null,
+            hireDate: new Date() 
+        });
+
+        res.status(201).json({ 
+            message: "Teacher registered successfully", 
+            teacher: {
+                id: teacher?.person.user?.id,
+                name: teacher?.person.name,
+                email: teacher?.person.email,
+                role: teacher?.person.user?.role
+            }
+        });
+    }
+    catch (error) {
+        res.status(500).json({ error: `Failed to register teacher: ${error.message}` });
+    }
 }
+
+
 
 export async function getMe(req: Request, res: Response) {
     try {
@@ -84,6 +122,6 @@ export async function getMe(req: Request, res: Response) {
         });
     }
     catch (error) {
-        res.status(500).json({ error: "Failed to retrieve user" });
+        res.status(500).json({ error: "Failed to retrieve user"});
     }
 }
