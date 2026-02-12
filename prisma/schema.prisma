@@ -63,7 +63,7 @@ model User {
 
 model StudentProfile {
   id                 Int           @id @default(autoincrement())
-  registrationNumber String        @unique // matrícula
+  registrationNumber String        @unique
   status             StudentStatus @default(ACTIVE)
   
 

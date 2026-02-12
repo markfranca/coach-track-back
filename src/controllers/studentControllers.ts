@@ -11,7 +11,7 @@ export async function getAllStudents(req: Request, res: Response) {
     }
 }
 
-// Buscar aluno por ID (para o próprio aluno ou admin/professor)
+
 export async function getStudentById(req: Request, res: Response) {
     try {
  
@@ -33,7 +33,6 @@ export async function getStudentById(req: Request, res: Response) {
     }
 }
 
-// Criar aluno (para admin) - SEM LOGIN
 export async function createStudent(req: Request, res: Response) {
     try {
         const data = req.body;
@@ -48,6 +47,11 @@ export async function createStudent(req: Request, res: Response) {
             message: "Student created successfully", 
             student: newStudent 
         });
+
+        if (!newStudent) {
+            return res.status(500).json({ error: "Failed to create student" });
+        }
+   
     } catch (error: any) {
         res.status(500).json({ error: error.message || "Failed to create student" });
     }

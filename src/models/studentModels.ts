@@ -40,7 +40,6 @@ export const getStudentById = async (studentId: number) => {
 // Criar aluno (Person + StudentProfile) - SEM LOGIN
 export const createStudent = async (data: any) => {
     return await prisma.$transaction(async (tx) => {
-        // 1. Criar Person
         const person = await tx.person.create({
             data: {
                 name: data.name,
@@ -51,7 +50,6 @@ export const createStudent = async (data: any) => {
             }
         });
 
-        // 2. Criar StudentProfile
         const student = await tx.studentProfile.create({
             data: {
                 personId: person.id,
@@ -69,10 +67,8 @@ export const createStudent = async (data: any) => {
     });
 }
 
-// Atualizar aluno
 export const updateStudent = async (studentId: number, data: any) => {
     return await prisma.$transaction(async (tx) => {
-        // Buscar o aluno para pegar o personId
         const student = await tx.studentProfile.findUnique({
             where: { id: studentId }
         });
@@ -80,8 +76,6 @@ export const updateStudent = async (studentId: number, data: any) => {
         if (!student) {
             throw new Error("Student not found");
         }
-
-        // Atualizar Person (se tiver dados pessoais)
         if (data.name || data.email || data.phone) {
             await tx.person.update({
                 where: { id: student.personId },
@@ -93,7 +87,6 @@ export const updateStudent = async (studentId: number, data: any) => {
             });
         }
 
-        // Atualizar StudentProfile
         const updatedStudent = await tx.studentProfile.update({
             where: { id: studentId },
             data: {
@@ -115,7 +108,6 @@ export const updateStudent = async (studentId: number, data: any) => {
     });
 }
 
-// Deletar aluno (cascade deleta Person também)
 export const deleteStudent = async (studentId: number) => {
     const student = await prisma.studentProfile.findUnique({
         where: { id: studentId }
@@ -125,7 +117,6 @@ export const deleteStudent = async (studentId: number) => {
         throw new Error("Student not found");
     }
 
-    // Deletar Person (cascade deleta StudentProfile)
     await prisma.person.delete({
         where: { id: student.personId }
     });
@@ -133,7 +124,7 @@ export const deleteStudent = async (studentId: number) => {
     return { message: "Student deleted successfully" };
 }
 
-// Ativar acesso (criar User para Student existente)
+
 export const activateStudentAccess = async (studentId: number, data: any) => {
     return await prisma.$transaction(async (tx) => {
         const student = await tx.studentProfile.findUnique({
@@ -155,13 +146,11 @@ export const activateStudentAccess = async (studentId: number, data: any) => {
             throw new Error("Student already has login access");
         }
 
-        // Atualizar email da person (se necessário)
         await tx.person.update({
             where: { id: student.personId },
             data: { email: data.email }
         });
 
-        // Criar User
         const user = await tx.user.create({
             data: {
                 personId: student.personId,
