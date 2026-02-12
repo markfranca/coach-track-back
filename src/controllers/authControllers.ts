@@ -43,7 +43,7 @@ export async function login(req: Request, res: Response) {
         });
     }
     catch (error) {
-        res.status(500).json({ error: `Failed to login: ${error.message}` });
+        res.status(500).json({ error: `Failed to login: ${(error as Error).message}` });
         console.log(error);
     }
 }
@@ -85,7 +85,7 @@ export async function registerTeacher(req: Request, res: Response)  {
         });
     }
     catch (error) {
-        res.status(500).json({ error: `Failed to register teacher: ${error.message}` });
+        res.status(500).json({ error: `Failed to register teacher: ${(error as Error).message}` });
     }
 }
 
