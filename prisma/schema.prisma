@@ -84,9 +84,6 @@ model StudentProfile {
   @@map("student_profiles")
 }
 
-// ========================================
-// TEACHER PROFILE
-// ========================================
 
 model TeacherProfile {
   id             Int      @id @default(autoincrement())

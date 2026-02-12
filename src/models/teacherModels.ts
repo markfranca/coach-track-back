@@ -1,7 +1,6 @@
 import prisma from "../lib/prisma";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
-// Listar todos os professores
 export const getAllTeachers = async () => {
     const teachers = await prisma.teacherProfile.findMany({
         include: {
@@ -15,7 +14,6 @@ export const getAllTeachers = async () => {
     return teachers;
 }
 
-// Buscar professor por ID
 export const getTeacherById = async (teacherId: number) => {
     const teacher = await prisma.teacherProfile.findUnique({
         where: { id: teacherId },
@@ -43,10 +41,8 @@ export const getTeacherById = async (teacherId: number) => {
     return teacher;
 }
 
-// Criar professor (Person + TeacherProfile + User) - COM LOGIN
 export const createTeacher = async (data: any) => {
     return await prisma.$transaction(async (tx) => {
-        // 1. Criar Person
         const person = await tx.person.create({
             data: {
                 name: data.name,
@@ -57,7 +53,6 @@ export const createTeacher = async (data: any) => {
             }
         });
 
-        // 2. Criar TeacherProfile
         const teacher = await tx.teacherProfile.create({
             data: {
                 personId: person.id,
@@ -65,7 +60,6 @@ export const createTeacher = async (data: any) => {
             }
         });
 
-        // 3. Criar User (professor SEMPRE tem login)
         const hashedPassword = await bcrypt.hash(data.password, 10);
         
         const user = await tx.user.create({
@@ -77,7 +71,6 @@ export const createTeacher = async (data: any) => {
             }
         });
 
-        // Retornar teacher com person e user
         return await tx.teacherProfile.findUnique({
             where: { id: teacher.id },
             include: {
@@ -91,7 +84,6 @@ export const createTeacher = async (data: any) => {
     });
 }
 
-// Atualizar professor
 export const updateTeacher = async (teacherId: number, data: any) => {
     return await prisma.$transaction(async (tx) => {
         const teacher = await tx.teacherProfile.findUnique({
@@ -102,7 +94,6 @@ export const updateTeacher = async (teacherId: number, data: any) => {
             throw new Error("Teacher not found");
         }
 
-        // Atualizar Person
         if (data.name || data.email || data.phone) {
             await tx.person.update({
                 where: { id: teacher.personId },
@@ -114,7 +105,6 @@ export const updateTeacher = async (teacherId: number, data: any) => {
             });
         }
 
-        // Atualizar TeacherProfile
         const updatedTeacher = await tx.teacherProfile.update({
             where: { id: teacherId },
             data: {
@@ -133,7 +123,6 @@ export const updateTeacher = async (teacherId: number, data: any) => {
     });
 }
 
-// Deletar professor
 export const deleteTeacher = async (teacherId: number) => {
     const teacher = await prisma.teacherProfile.findUnique({
         where: { id: teacherId }
@@ -143,7 +132,6 @@ export const deleteTeacher = async (teacherId: number) => {
         throw new Error("Teacher not found");
     }
 
-    // Deletar Person (cascade deleta TeacherProfile e User)
     await prisma.person.delete({
         where: { id: teacher.personId }
     });

@@ -1,6 +1,5 @@
 import prisma from "../lib/prisma";
 
-// Buscar usuário por email (para login)
 export const getUserByEmail = async (email: string) => {
     const user = await prisma.user.findUnique({
         where: { email },
@@ -16,7 +15,6 @@ export const getUserByEmail = async (email: string) => {
     return user;
 }
 
-// Buscar usuário por ID
 export const getUserById = async (id: number) => {
     const user = await prisma.user.findUnique({
         where: { id },
@@ -32,7 +30,6 @@ export const getUserById = async (id: number) => {
     return user;
 }
 
-// Atualizar último login
 export const updateLastLogin = async (userId: number) => {
     return await prisma.user.update({
         where: { id: userId },

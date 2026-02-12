@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import { generateAccessToken } from "../utils/token";
 import { getUserByEmail, getUserById, updateLastLogin } from '../models/userModels';
 
@@ -23,10 +23,8 @@ export async function login(req: Request, res: Response) {
             return res.status(401).json({ error: "Invalid password" });
         }
 
-        // Atualizar último login
         await updateLastLogin(user.id);
 
-        // Gerar token
         const token = generateAccessToken({
             id: user.id,
             email: user.email,
@@ -50,20 +48,11 @@ export async function login(req: Request, res: Response) {
     }
 }
 
-// Registrar professor (Person + TeacherProfile + User)
-// Use createTeacher no teacherControllers ao invés disso
-export async function register(req: Request, res: Response) {
-    try {
-        return res.status(400).json({ 
-            error: "Use /teachers to create a teacher account" 
-        });
-    }
-    catch (error) {
-        res.status(500).json({ error: "Failed to register user" });
-    }
+// N IREI IMPLEMENTAR POR ENQUANTO POIS TODOS OS PROFESSORES SERÃO CRIADOS A PARTIR DE UMA SEED E ALUNOS NÃO ACESSARAM O SSITEMA APENAS SÃO UMA ENTIDADE
+export async function register(req: Request, res: Response)  {
+    res.status(200).json({ message: "Registration endpoint - to be implemented" });
 }
 
-// Pegar perfil do usuário logado
 export async function getMe(req: Request, res: Response) {
     try {
         if (!req.user) {
