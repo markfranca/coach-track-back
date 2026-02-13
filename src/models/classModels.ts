@@ -61,9 +61,21 @@ export const createClass = async (classData: any) => {
 } 
 
 export const updateClass = async (classId: number, classData: any) => {
-    // Implementation for updating a class
+   const updatedClass = await prisma.class.update({
+    where: { id: classId },
+    data: {
+        name: classData.name,
+        description: classData.description,
+        teacherId: classData.teacherId,
+        schedule: classData.schedule,
+    },
+   });
+   return updatedClass;
 }
 
 export const deleteClass = async (classId: number) => {
-    // Implementation for deleting a class
+    const deletedClass = await prisma.class.delete({
+        where: { id: classId },
+    });
+    return deletedClass;
 }

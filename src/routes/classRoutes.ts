@@ -7,8 +7,8 @@ const router = Router();
 router.post("/", createClass);
 router.get("/", getAllClasses);
 router.get("/:id", getClassById);
-//router.put("/:id")
-//router.delete("/:id")
+router.put("/:id", updateClass);
+router.delete("/:id", deleteClass)
 
 
 
