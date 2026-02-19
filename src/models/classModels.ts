@@ -55,6 +55,22 @@ export const createClass = async (classData: any) => {
             schedule: classData.schedule,
             startDate: new Date()
         },
+        include: {
+            teacher: {
+                include: {
+                    person: true
+                }
+            },
+            students: {
+                include: {
+                    student: {
+                        include: {
+                            person: true
+                        }
+                    }
+                }
+            }
+        }
     });
     return newClass;
     

@@ -8,9 +8,9 @@ const router = Router();
 router.post("/", verifyIsTeacher,createClass);
 router.get("/", getAllClasses);
 router.get("/:id", getClassById);
-router.put("/:id", updateClass);
-router.delete("/:id", deleteClass)
-router.get("/teacher/:teacherId", getClassesByTeacherId);
+router.put("/:id", verifyIsTeacher, updateClass);
+router.delete("/:id", verifyIsTeacher,deleteClass)
+router.get("/teacher/:teacherId", verifyIsTeacher,getClassesByTeacherId);
 
 
 
