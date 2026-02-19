@@ -118,3 +118,77 @@ export const getAllClassesByTeacherId = async (teacherId: number) => {
     });
     return classes;
 }
+
+
+export const isStudentEnrolled = async (classId: number, studentId: number) => {
+    const enrollment = await prisma.classStudent.findFirst({
+        where: {
+            classId,
+            studentId
+        }
+    });
+    return !!enrollment;
+}
+
+
+export const enrollStudent = async (classId: number, studentId: number) => {
+    const enrollment = await prisma.classStudent.create({
+        data: {
+            classId,
+            studentId
+        },
+        include: {
+            student: {
+                include: {
+                    person: true
+                }
+            },
+            class: {
+                include: {
+                    teacher: {
+                        include: {
+                            person: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+    return enrollment;
+}
+
+
+export const removeStudent = async (classId: number, studentId: number) => {
+    const enrollment = await prisma.classStudent.deleteMany({
+        where: {
+            classId,
+            studentId
+        }
+    });
+    return enrollment;
+}
+
+export const getClassStudents = async (classId: number) => {
+    const enrollments = await prisma.classStudent.findMany({
+        where: { classId },
+        include: {
+            student: {
+                include: {
+                    person: true
+                }
+            }
+        },
+        orderBy: {
+            enrolledAt: 'desc'
+        }
+    });
+    return enrollments;
+}
+
+export const countEnrolledStudents = async (classId: number) => {
+    const count = await prisma.classStudent.count({
+        where: { classId }
+    });
+    return count;
+}
+
