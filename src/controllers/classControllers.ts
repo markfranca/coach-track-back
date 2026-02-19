@@ -116,3 +116,28 @@ export async function deleteClass(req: Request, res: Response) {
         res.status(500).json({ error: `Error deleting class: ${(error as Error).message}` });
     }
 }
+
+export async function getClassesByTeacherId(req: Request, res: Response) {
+    try {
+        const teacherId = req.user?.role === "TEACHER" ? req.user.teacherId : Number(req.params.teacherId);
+
+        if (!teacherId) {
+            return res.status(400).json({ error: "Teacher ID is required" });
+        }
+
+        if (isNaN(teacherId)) {
+            return res.status(400).json({ error: "Invalid teacher ID" });
+        }
+
+        const classes = await classModel.getAllClassesByTeacherId(teacherId);
+
+        if (!classes) {
+            return res.status(404).json({ error: "No classes found for this teacher" });
+        }
+
+        res.status(200).json({ classes });
+
+    } catch (error) {
+        res.status(500).json({ error: `Error fetching classes: ${(error as Error).message}` });
+    }
+}

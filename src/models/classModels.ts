@@ -79,3 +79,26 @@ export const deleteClass = async (classId: number) => {
     });
     return deletedClass;
 }
+
+export const getAllClassesByTeacherId = async (teacherId: number) => {
+    const classes = await prisma.class.findMany({
+        where: { teacherId },
+        include: {
+            teacher: {
+                include: {
+                    person: true
+                }
+            },
+            students: {
+                include: {
+                    student: {
+                        include: {
+                            person: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+    return classes;
+}
