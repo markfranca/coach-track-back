@@ -63,7 +63,7 @@ export async function updateAttendance(req: Request, res: Response) {
             return res.status(400).json({ error: "Invalid attendance ID" });
         }
 
-        if (!status || !notes || !checkedAt) {
+        if (!status && !notes) {
             return res.status(400).json({ error: "Provide at least status or notes to update" });
         }
 

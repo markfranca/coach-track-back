@@ -14,11 +14,11 @@ const router = Router();
 
 router.use(authMiddleware);
 
-router.get("/", getAllAttendance);                               
-router.get("/:id", getAttendanceById);                               
-router.post("/", verifyIsTeacher, createAttendance);                
-router.patch("/:id", verifyIsTeacher, updateAttendance);            
-router.delete("/:id", verifyIsTeacher, deleteAttendance);           
 router.get("/student/:studentId/summary", getStudentAttendanceSummary);
+router.get("/", getAllAttendance);
+router.get("/:id", getAttendanceById);
+router.post("/", verifyIsTeacher, createAttendance);
+router.patch("/:id", verifyIsTeacher, updateAttendance);
+router.delete("/:id", verifyIsTeacher, deleteAttendance);
 
 export default router;
