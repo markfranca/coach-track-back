@@ -6,3 +6,6 @@ const router = Router();
 router.post("/:id/students", verifyIsTeacher, enrollStudent);
 router.delete("/:id/students/:studentId", verifyIsTeacher, removeStudent);
 router.get("/:id/students", getClassStudents);
+
+
+export default router;
