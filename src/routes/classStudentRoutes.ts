@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { enrollStudent, getClassStudents, removeStudent } from "../controllers/classStudentController";
-import { verifyIsTeacher } from "../middlewares/rolesMIddleware";
+import { verifyIsTeacher } from "../middlewares/rolesMiddleware";
 const router = Router();
 
 router.post("/:id/students", verifyIsTeacher, enrollStudent);

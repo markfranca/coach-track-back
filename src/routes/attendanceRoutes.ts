@@ -8,7 +8,7 @@ import {
     getStudentAttendanceSummary
 } from "../controllers/attendanceControllers";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { verifyIsTeacher } from "../middlewares/rolesMIddleware";
+import { verifyIsTeacher } from "../middlewares/rolesMiddleware";
 
 const router = Router();
 
