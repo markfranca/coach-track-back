@@ -138,3 +138,40 @@ export const deleteTeacher = async (teacherId: number) => {
 
     return { message: "Teacher deleted successfully" };
 }
+
+// Buscar todos os alunos únicos que estão em turmas do professor
+export const getStudentsByTeacherId = async (teacherId: number) => {
+    return await prisma.studentProfile.findMany({
+        where: {
+            classEnrollments: {
+                some: {
+                    class: {
+                        teacherId
+                    }
+                }
+            }
+        },
+        include: {
+            person: true,
+            classEnrollments: {
+                where: {
+                    class: { teacherId }
+                },
+                include: {
+                    class: {
+                        select: {
+                            id: true,
+                            name: true,
+                            schedule: true
+                        }
+                    }
+                }
+            }
+        },
+        orderBy: {
+            person: {
+                name: 'asc'
+            }
+        }
+    });
+}

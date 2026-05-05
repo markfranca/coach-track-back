@@ -1,6 +1,6 @@
 import {Router} from "express";
 import { createClass, getAllClasses, getClassById, updateClass, deleteClass, getClassesByTeacherId } from "../controllers/classControllers";
-import { verifyIsTeacher } from "../middlewares/rolesMIddleware";
+import { verifyIsTeacher } from "../middlewares/rolesMiddleware";
 
 const router = Router();
 
