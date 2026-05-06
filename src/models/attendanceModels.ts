@@ -1,7 +1,12 @@
 import prisma from "../lib/prisma";
+import {
+    AttendanceResponse,
+    CreateAttendanceData,
+    UpdateAttendanceData,
+} from "../interfaces/attedanceInterface";
 
 
-export const getAllAttendance = async () => {
+export const getAllAttendance = async (): Promise<AttendanceResponse[]> => {
     const attendanceRecords = await prisma.attendance.findMany({
         include: {
             student: {
@@ -19,7 +24,7 @@ export const getAllAttendance = async () => {
     return attendanceRecords;
 }
 
-export const getAttendanceById = async (attendanceId: number) => {
+export const getAttendanceById = async (attendanceId: number): Promise<AttendanceResponse | null> => {
     const attendanceRecord = await prisma.attendance.findUnique({
         where: { id: attendanceId },
         include: {
@@ -38,14 +43,14 @@ export const getAttendanceById = async (attendanceId: number) => {
     return attendanceRecord;
 }
 
-export const createAttendance = async (attendanceData: any) => {
+export const createAttendance = async (attendanceData: CreateAttendanceData): Promise<AttendanceResponse> => {
     const newAttendance = await prisma.attendance.create({
         data: {
             studentId: attendanceData.studentId,
             lessonId: attendanceData.lessonId,
             status: attendanceData.status,
             notes: attendanceData.notes,
-            checkedAt: new Date()
+            checkedAt: attendanceData.checkedAt ? new Date(attendanceData.checkedAt) : new Date()
         },
         include: {
             student: {
@@ -63,13 +68,13 @@ export const createAttendance = async (attendanceData: any) => {
     return newAttendance;
 }
 
-export const updateAttendance = async (attendanceId: number, attendanceData: any) => {
+export const updateAttendance = async (attendanceId: number, attendanceData: UpdateAttendanceData): Promise<AttendanceResponse> => {
     const updatedAttendance = await prisma.attendance.update({
         where: { id: attendanceId },
         data: {
             status: attendanceData.status,
             notes: attendanceData.notes,
-            checkedAt: new Date()
+            checkedAt: attendanceData.checkedAt ? new Date(attendanceData.checkedAt) : new Date()
         },
         include: {
             student: {
@@ -87,7 +92,7 @@ export const updateAttendance = async (attendanceId: number, attendanceData: any
     return updatedAttendance;
 }
 
-export const deleteAttendance = async (attendanceId: number) => {
+export const deleteAttendance = async (attendanceId: number): Promise<AttendanceResponse> => {
     const deletedAttendance = await prisma.attendance.delete({
         where: { id: attendanceId },
         include: {
@@ -106,7 +111,7 @@ export const deleteAttendance = async (attendanceId: number) => {
     return deletedAttendance;
 }
 
-export const countLessonsAttendedByStudent = async (studentId: number) => {
+export const countLessonsAttendedByStudent = async (studentId: number): Promise<number> => {
     const count = await prisma.attendance.count({
         where: {
             studentId,
@@ -116,7 +121,7 @@ export const countLessonsAttendedByStudent = async (studentId: number) => {
     return count;
 }
 
-export const countLessonsMissedByStudent = async (studentId: number) => {
+export const countLessonsMissedByStudent = async (studentId: number): Promise<number> => {
     const count = await prisma.attendance.count({
         where: {
             studentId,

@@ -1,6 +1,11 @@
 import prisma from "../lib/prisma";
+import {
+  CreateLessonData,
+  LessonResponse,
+  UpdateLessonData,
+} from "../interfaces/lessonInterface";
 
-export const getAllLessons = async () => {
+export const getAllLessons = async (): Promise<LessonResponse[]> => {
   const lessons = await prisma.lesson.findMany({
     include: {
       class: {
@@ -26,7 +31,7 @@ export const getAllLessons = async () => {
   return lessons;
 };
 
-export const getLessonById = async (lessonId: number) => {
+export const getLessonById = async (lessonId: number): Promise<LessonResponse | null> => {
   const lesson = await prisma.lesson.findUnique({
     where: { id: lessonId },
     include: {
@@ -53,10 +58,19 @@ export const getLessonById = async (lessonId: number) => {
   return lesson;
 };
 
-export const getLessonsByClassId = async (classId: number) => {
+export const getLessonsByClassId = async (classId: number): Promise<LessonResponse[]> => {
   const lessons = await prisma.lesson.findMany({
     where: { classId },
     include: {
+      class: {
+        include: {
+          teacher: {
+            include: {
+              person: true,
+            },
+          },
+        },
+      },
       attendances: {
         include: {
           student: {
@@ -74,7 +88,7 @@ export const getLessonsByClassId = async (classId: number) => {
   return lessons;
 };
 
-export const createLesson = async (lessonData: any) => {
+export const createLesson = async (lessonData: CreateLessonData): Promise<LessonResponse> => {
   const newLesson = await prisma.lesson.create({
     data: {
       classId: lessonData.classId,
@@ -107,7 +121,7 @@ export const createLesson = async (lessonData: any) => {
   return newLesson;
 };
 
-export const updateLesson = async (lessonId: number, lessonData: any) => {
+export const updateLesson = async (lessonId: number, lessonData: UpdateLessonData): Promise<LessonResponse> => {
   const updatedLesson = await prisma.lesson.update({
     where: { id: lessonId },
     data: {
@@ -143,6 +157,26 @@ export const updateLesson = async (lessonId: number, lessonData: any) => {
 export const deleteLesson = async (lessonId: number) => {
   const deletedLesson = await prisma.lesson.delete({
     where: { id: lessonId },
+    include: {
+      class: {
+        include: {
+          teacher: {
+            include: {
+              person: true,
+            },
+          },
+        },
+      },
+      attendances: {
+        include: {
+          student: {
+            include: {
+              person: true,
+            },
+          },
+        },
+      },
+    },
   });
   return deletedLesson;
 };
