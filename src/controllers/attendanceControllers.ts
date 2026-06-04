@@ -32,7 +32,7 @@ export async function getAttendanceById(req: Request, res: Response) {
 
 export async function createAttendance(req: Request, res: Response) {
     try {
-        const { studentId, lessonId, status, notes } = req.body;
+        const { studentId, lessonId, status, notes, checkedAt } = req.body;
 
         if (!studentId || !lessonId || !status) {
             return res.status(400).json({ error: "Missing required fields: studentId, lessonId, status" });
@@ -43,7 +43,7 @@ export async function createAttendance(req: Request, res: Response) {
             return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` });
         }
 
-        const newRecord = await attendanceModel.createAttendance({ studentId, lessonId, status, notes });
+        const newRecord = await attendanceModel.createAttendance({ studentId, lessonId, status, notes, checkedAt });
 
         res.status(201).json({
             message: "Attendance record created successfully",
