@@ -15,7 +15,6 @@ export async function createClass(req: Request, res: Response) {
         }
 
         const teacherId = data.teacherId || req.user?.teacherId;
-        console.log(teacherId)
 
         const teacher = await getTeacherById(teacherId);
 
@@ -139,5 +138,116 @@ export async function getClassesByTeacherId(req: Request, res: Response) {
 
     } catch (error) {
         res.status(500).json({ error: `Error fetching classes: ${(error as Error).message}` });
+    }
+}
+
+export async function enrollStudent(req: Request, res: Response) {
+    try {
+        const classId = Number(req.params.id);
+        const { studentId } = req.body;
+
+        if (isNaN(classId)) {
+            return res.status(400).json({ error: "Invalid class ID" });
+        }
+
+        if (!studentId || isNaN(studentId)) {
+            return res.status(400).json({ error: "Student ID is required" });
+        }
+
+        const classExists = await classModel.getClassById(classId);
+        if (!classExists) {
+            return res.status(404).json({ error: "Class not found" });
+        }
+
+        const isEnrolled = await classModel.isStudentEnrolled(classId, studentId);
+        if (isEnrolled) {
+            return res.status(409).json({ error: "Student already enrolled in this class" });
+        }
+
+        const enrollment = await classModel.enrollStudent(classId, studentId);
+
+        res.status(201).json({
+            message: "Student enrolled successfully",
+            enrollment: {
+                id: enrollment.id,
+                enrolledAt: enrollment.enrolledAt,
+                student: {
+                    id: enrollment.student.id,
+                    name: enrollment.student.person.name,
+                    registrationNumber: enrollment.student.registrationNumber
+                },
+                class: {
+                    id: enrollment.class.id,
+                    name: enrollment.class.name
+                }
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ error: `Error enrolling student: ${(error as Error).message}` });
+    }
+}
+
+export async function removeStudent(req: Request, res: Response) {
+    try {
+        const classId = Number(req.params.id);
+        const studentId = Number(req.params.studentId);
+
+        if (isNaN(classId)) {
+            return res.status(400).json({ error: "Invalid class ID" });
+        }
+
+        if (isNaN(studentId)) {
+            return res.status(400).json({ error: "Invalid student ID" });
+        }
+
+        const isEnrolled = await classModel.isStudentEnrolled(classId, studentId);
+        if (!isEnrolled) {
+            return res.status(404).json({ error: "Student not enrolled in this class" });
+        }
+
+        await classModel.removeStudent(classId, studentId);
+
+        res.status(200).json({ message: "Student removed successfully" });
+    } catch (error) {
+        res.status(500).json({ error: `Error removing student: ${(error as Error).message}` });
+    }
+}
+
+export async function getClassStudents(req: Request, res: Response) {
+    try {
+        const classId = Number(req.params.id);
+
+        if (isNaN(classId)) {
+            return res.status(400).json({ error: "Invalid class ID" });
+        }
+
+        const classExists = await classModel.getClassById(classId);
+        if (!classExists) {
+            return res.status(404).json({ error: "Class not found" });
+        }
+
+        const enrollments = await classModel.getClassStudents(classId);
+
+        const students = enrollments.map(enrollment => ({
+            enrollmentId: enrollment.id,
+            enrolledAt: enrollment.enrolledAt,
+            student: {
+                id: enrollment.student.id,
+                name: enrollment.student.person.name,
+                email: enrollment.student.person.email,
+                phone: enrollment.student.person.phone,
+                registrationNumber: enrollment.student.registrationNumber,
+                status: enrollment.student.status
+            }
+        }));
+
+        res.status(200).json({
+            classId,
+            className: classExists.name,
+            totalStudents: students.length,
+            students
+        });
+    } catch (error) {
+        res.status(500).json({ error: `Error fetching students: ${(error as Error).message}` });
     }
 }
