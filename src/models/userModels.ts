@@ -38,3 +38,14 @@ export const updateLastLogin = async (userId: number) => {
         }
     });
 }
+
+export const getUserByCpf = async (cpf: string) => {
+    const user = await prisma.user.findFirst({
+        where: {
+            person: {
+                cpf
+            }
+        }
+    });
+    return user;
+}

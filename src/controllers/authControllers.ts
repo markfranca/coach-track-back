@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { generateAccessToken } from "../utils/token";
-import { getUserByEmail, getUserById, updateLastLogin } from '../models/userModels';
+import { getUserByEmail, getUserById, updateLastLogin, getUserByCpf } from '../models/userModels';
 import { createTeacher } from '../models/teacherModels';
 // Login
 export async function login(req: Request, res: Response) {
@@ -53,14 +53,17 @@ export async function registerTeacher(req: Request, res: Response)  {
     
         const { name, email, password, phone, specialization, cpf, birthDate } = req.body;
 
-        if (!name || !email || !password) {
-            return res.status(400).json({ error: "Missing required fields: name, email, password" });
+        if (!name || !email || !password  || !cpf || !phone || !specialization) {
+            return res.status(400).json({ error: "Missing required fields: name, email, password, cpf, phone, specialization " });
         }
 
         if (await getUserByEmail(email)) {
             return res.status(409).json({ error: "Email already in use" });
         }
 
+        if (await getUserByCpf(cpf)) {
+            return res.status(409).json({ error: "CPF already in use" });
+        }
 
         const teacher = await createTeacher({
             name,
