@@ -2,6 +2,7 @@ require("dotenv/config");
 const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 const { Pool } = require("pg");
+const bcrypt = require("bcrypt");
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
@@ -111,6 +112,81 @@ async function main() {
   for (const data of students) {
     await prisma.studentProfile.create({ data });
   }
+
+  // --- Create a teacher user, two classes and enroll students ---
+  const teacherEmail = "professor@example.com";
+  const teacherPlainPassword = "SenhaProf123!";
+
+  // create person for teacher
+  const teacherPerson = await prisma.person.create({
+    data: {
+      name: "Professor Exemplo",
+      email: teacherEmail,
+      phone: "+55 11 90000-0000",
+      cpf: "99999999999",
+      birthDate: new Date(1980, 0, 1)
+    }
+  });
+
+  // create teacher profile
+  const teacherProfile = await prisma.teacherProfile.create({
+    data: {
+      personId: teacherPerson.id,
+      specialization: "Educação Física"
+    }
+  });
+
+  // hash password and create user
+  const hashed = await bcrypt.hash(teacherPlainPassword, 10);
+  await prisma.user.create({
+    data: {
+      personId: teacherPerson.id,
+      email: teacherEmail,
+      password: hashed,
+      role: "TEACHER"
+    }
+  });
+
+  // create two classes for this teacher
+  const classA = await prisma.class.create({
+    data: {
+      name: "Turma A - Professor Exemplo",
+      description: "Turma gerada pelo seed",
+      schedule: "Seg/Qua 18:00-20:00",
+      startDate: new Date(),
+      teacherId: teacherProfile.id
+    }
+  });
+
+  const classB = await prisma.class.create({
+    data: {
+      name: "Turma B - Professor Exemplo",
+      description: "Turma gerada pelo seed",
+      schedule: "Ter/Qui 18:00-20:00",
+      startDate: new Date(),
+      teacherId: teacherProfile.id
+    }
+  });
+
+  // fetch created students to enroll
+  const createdStudents = await prisma.studentProfile.findMany({
+    orderBy: { id: 'asc' },
+    take: 20
+  });
+
+  // enroll first 10 in classA and next 10 in classB
+  for (let i = 0; i < createdStudents.length; i++) {
+    const stu = createdStudents[i];
+    const targetClassId = i < 10 ? classA.id : classB.id;
+    await prisma.classStudent.create({
+      data: {
+        classId: targetClassId,
+        studentId: stu.id
+      }
+    });
+  }
+
+  console.log("SEED: teacher created -> email:", teacherEmail, ", password:", teacherPlainPassword);
 }
 
 main()

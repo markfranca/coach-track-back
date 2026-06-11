@@ -10,7 +10,7 @@ import {
     removeStudent,
     getClassStudents
 } from "../controllers/classControllers";
-import { verifyIsTeacher } from "../middlewares/rolesMIddleware";
+import { verifyIsTeacher } from "../middlewares/rolesMiddleware";
 
 const router = Router();
 
@@ -24,4 +24,4 @@ router.post("/:id/students", verifyIsTeacher, enrollStudent);
 router.delete("/:id/students/:studentId", verifyIsTeacher, removeStudent); 
 router.get("/:id/students", getClassStudents);                      
 
-export default router;
+export default router
