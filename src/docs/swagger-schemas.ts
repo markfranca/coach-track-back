@@ -132,6 +132,27 @@ const swaggerSchemas = {
       checkedAt: { type: "string", format: "date-time", nullable: true },
     },
   },
+  ClassGradesUpsertRequest: {
+    type: "object",
+    required: ["grades"],
+    properties: {
+      grades: {
+        type: "array",
+        items: {
+          type: "object",
+          required: ["studentId"],
+          properties: {
+            studentId: { type: "integer", example: 1 },
+            u1: { type: "number", format: "float", nullable: true, example: 8.5 },
+            u2: { type: "number", format: "float", nullable: true, example: 6.5 },
+            u3: { type: "number", format: "float", nullable: true, example: 7.25 },
+            recoveryExam: { type: "number", format: "float", nullable: true, example: 8 },
+            finalExam: { type: "number", format: "float", nullable: true, example: 7 },
+          },
+        },
+      },
+    },
+  },
 };
 
 export default swaggerSchemas;

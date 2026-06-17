@@ -7,6 +7,7 @@ import classesPaths from "./swagger-paths-classes";
 import lessonsPaths from "./swagger-paths-lessons";
 import attendancePaths from "./swagger-paths-attendance";
 import classStudentsPaths from "./swagger-paths-class-students";
+import gradePaths from "./swagger-paths-grades";
 
 const swaggerSpec = {
   ...swaggerBase,
@@ -22,6 +23,7 @@ const swaggerSpec = {
     ...lessonsPaths,
     ...attendancePaths,
     ...classStudentsPaths,
+    ...gradePaths,
   },
 };
 

@@ -135,6 +135,11 @@ model ClassStudent {
   student    StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
   
   enrolledAt DateTime @default(now())
+  u1         Float?
+  u2         Float?
+  u3         Float?
+  recoveryExam Float?
+  finalExam  Float?
   
   @@unique([classId, studentId])
   @@map("class_students")
