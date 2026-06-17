@@ -85,6 +85,10 @@ function makeBirthDate(index) {
   return new Date(year, month - 1, day);
 }
 
+function makeStudentPhoto(index) {
+  return `https://i.pravatar.cc/300?img=${index + 1}`;
+}
+
 async function main() {
   const students = Array.from({ length: 20 }, (_, i) => {
     const first = pick(firstNames, i);
@@ -103,6 +107,7 @@ async function main() {
         }
       },
       registrationNumber: `REG-${padNumber(i + 1, 4)}`,
+      photo: makeStudentPhoto(i),
       responsibleName: `Resp ${first} ${last}`,
       responsiblePhone: makePhone(i + 20),
       emergencyContact: `Emerg ${first} ${last}`

@@ -54,6 +54,7 @@ export const createStudent = async (data: any) => {
             data: {
                 personId: person.id,
                 registrationNumber: data.registrationNumber,
+                photo: data.photo,
                 responsibleName: data.responsibleName,
                 responsiblePhone: data.responsiblePhone,
                 emergencyContact: data.emergencyContact,
@@ -90,6 +91,7 @@ export const updateStudent = async (studentId: number, data: any) => {
         const updatedStudent = await tx.studentProfile.update({
             where: { id: studentId },
             data: {
+                photo: data.photo,
                 responsibleName: data.responsibleName,
                 responsiblePhone: data.responsiblePhone,
                 emergencyContact: data.emergencyContact,

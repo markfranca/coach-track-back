@@ -65,6 +65,7 @@ model StudentProfile {
   id                 Int           @id @default(autoincrement())
   registrationNumber String        @unique
   status             StudentStatus @default(ACTIVE)
+  photo               String?
   
 
   responsibleName    String?

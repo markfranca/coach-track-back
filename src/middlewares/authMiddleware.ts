@@ -5,7 +5,9 @@ import prisma from '../lib/prisma';
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
         const public_paths = ['/auth/login', '/auth/register-teacher'];
-        if (public_paths.includes(req.path)) {
+        const normalizedPath = req.path.replace(/\/+$/, '') || '/';
+
+        if (req.method === 'OPTIONS' || public_paths.includes(normalizedPath)) {
             return next();
         }
 

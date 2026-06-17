@@ -174,6 +174,7 @@ export async function enrollStudent(req: Request, res: Response) {
                 student: {
                     id: enrollment.student.id,
                     name: enrollment.student.person.name,
+                    photo: enrollment.student.photo,
                     registrationNumber: enrollment.student.registrationNumber
                 },
                 class: {
@@ -236,6 +237,7 @@ export async function getClassStudents(req: Request, res: Response) {
                 name: enrollment.student.person.name,
                 email: enrollment.student.person.email,
                 phone: enrollment.student.person.phone,
+                photo: enrollment.student.photo,
                 registrationNumber: enrollment.student.registrationNumber,
                 status: enrollment.student.status
             }
